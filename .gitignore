@@ -4,3 +4,6 @@ obj/
 riderModule.iml
 /_ReSharper.Caches/
 .idea/
+/.vs/ExpenseRecord/config/applicationhost.config
+/.vs/ExpenseRecord/v17/.suo
+/.vs/ExpenseRecord/DesignTimeBuild/.dtbcache.v2
