@@ -2,11 +2,25 @@ using ExpenseRecord.Service;
 
 var builder = WebApplication.CreateBuilder(args);
 
+
+var MyAllowSpecificOrigins = "_MyAllowSpecificOrigins";
+
 // Add services to the container.
 
 builder.Services.AddControllersWithViews();
 
 builder.Services.AddSingleton<ExpenseService>();
+
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy(MyAllowSpecificOrigins,
+        policy =>
+        {
+            policy.AllowAnyHeader();
+            policy.AllowAnyMethod();
+            policy.AllowAnyOrigin();
+        });
+});
 
 var app = builder.Build();
 
@@ -20,6 +34,8 @@ if (!app.Environment.IsDevelopment())
 app.UseHttpsRedirection();
 app.UseStaticFiles();
 app.UseRouting();
+
+app.UseCors(MyAllowSpecificOrigins);
 
 app.MapControllerRoute(
     name: "default",

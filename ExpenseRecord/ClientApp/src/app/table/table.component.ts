@@ -1,36 +1,47 @@
-import {Component, ViewChild} from '@angular/core';
+import {Component, OnInit, ViewChild} from '@angular/core';
 import {MatTable} from '@angular/material/table';
 import { FormGroup, FormControl } from '@angular/forms';
-
-
-
-export interface ExpenseType {
-  Description: string,
-  Type: string,
-  Amount: string,
-  Date: string
-}
-
-const ELEMENT_DATA: ExpenseType[] = [
-  {Description: 'Lunch', Type:"Meal", Amount: "11", Date: "20220101"},
-
-];
+import { ExpenseItem } from '../models/ExpenseItem';
+import { ExpenseServiceService } from '../service/expense-service.service';
 
  @Component({
   selector: 'app-table',
   templateUrl: './table.component.html',
   styleUrls: ['./table.component.css']
 })
-export class TableComponent {
+export class TableComponent implements OnInit {
+  public desc: string = "";
+  public am: string = "";
+  public ty: string = "";
+  public dt: string = "";
+
+  constructor(private expenseSerice: ExpenseServiceService){}
+  ngOnInit(): void {
+    this.expenseSerice.getAll().subscribe(res => this.dataSource = res);
+  }
   displayedColumns: string[] = ['Description', 'Type', 'Amount', 'Date', 'Delete'];
-  dataSource = [...ELEMENT_DATA];
+  dataSource: ExpenseItem[] = this.expenseSerice.expenseItems;
+
 
   addData() {
-    const randomElementIndex = Math.floor(Math.random() * ELEMENT_DATA.length);
-    this.dataSource.push(ELEMENT_DATA[randomElementIndex]);
+    if(this.desc == "" || this.dt == "" || this.ty == "" || this.am == "") {
+      alert("Input all info please!!!!!!!!!");
+      return;
+    }
+    const newExpenseItem: ExpenseItem = {
+      Description: this.desc,
+      ExpenseDate: this.dt,
+      ExpenseAmount: this.am,
+      ExpenseType: this.ty
+    };
+
+    this.expenseSerice.addNewItem(newExpenseItem).subscribe(res => this.dataSource = res);
+
+    // const randomElementIndex = Math.floor(Math.random() * ELEMENT_DATA.length);
+    // this.dataSource.push(ELEMENT_DATA[randomElementIndex]);
   }
 
-  removeData() {
-    this.dataSource.pop();
+  removeData(id: string) {
+    this.expenseSerice.deleteItem(id).subscribe(res => this.dataSource = res);
   }
 }
